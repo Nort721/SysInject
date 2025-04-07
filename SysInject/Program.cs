@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace ProcessExplorerClone
 {
@@ -115,6 +117,10 @@ namespace ProcessExplorerClone
             processListView.EndUpdate();
         }
 
+        [DllImport("Injections.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool InjectDllRemote(uint processId, string cDllFilePath);
+
         private void OnInjectClicked(object sender, EventArgs e)
         {
             if (processListView.SelectedItems.Count == 0)
@@ -125,21 +131,37 @@ namespace ProcessExplorerClone
 
             var item = processListView.SelectedItems[0];
             string procName = item.SubItems[0].Text;
-            string pid = item.SubItems[1].Text;
+            string pidStr = item.SubItems[1].Text;
+
+            if (!uint.TryParse(pidStr, out uint pid))
+            {
+                MessageBox.Show("Invalid PID selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             InjectionForm form = new InjectionForm();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 string selectedInjection = form.SelectedInjectionType;
-                string dllPath = form.SelectedDllPath;
+                string selectedDll = form.SelectedDllPath;
 
                 MessageBox.Show(
-                    "Would inject DLL:\n" + dllPath + "\nInto process: " + procName + " (PID " + pid + ")\nUsing method: " + selectedInjection,
+                    $"Would inject DLL:\n{selectedDll}\nInto process: {procName} (PID {pid})\nUsing method: {selectedInjection}",
                     "Injection Preview", MessageBoxButtons.OK, MessageBoxIcon.Information
                 );
 
-                // TODO: Actual injection logic
+                bool result = InjectDllRemote(pid, selectedDll);
+
+                if (result)
+                {
+                    MessageBox.Show("DLL injected successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("DLL injection failed.", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
+
             form.Dispose();
         }
 

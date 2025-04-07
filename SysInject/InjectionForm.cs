@@ -112,6 +112,7 @@ public class InjectionForm : Form
         }
 
         DialogResult = DialogResult.OK;
+
         Close();
     }
 }
