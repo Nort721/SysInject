@@ -31,7 +31,7 @@ namespace ProcessExplorerClone
             MinimumSize = new Size(fixedWidth, Height);
             DoubleBuffered = true;
 
-            this.Icon = LoadIconFromResource("SysInject.icon.ico");
+            this.Icon = LoadIconFromResource("SysInject.icn.ico");
             this.Size = new Size(400, 300);
 
             AllowDrop = true;
