@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace ProcessExplorerClone
 {
@@ -23,11 +25,14 @@ namespace ProcessExplorerClone
         {
             Text = "SysInject";
             Width = fixedWidth;
-            Height = 500;
+            Height = 600;
             Font = SystemFonts.MessageBoxFont;
             StartPosition = FormStartPosition.CenterScreen;
-            MinimumSize = new Size(fixedWidth, 300);
+            MinimumSize = new Size(fixedWidth, Height);
             DoubleBuffered = true;
+
+            this.Icon = LoadIconFromResource("SysInject.icon.ico");
+            this.Size = new Size(400, 300);
 
             AllowDrop = true;
             DragEnter += MainForm_DragEnter;
@@ -43,6 +48,20 @@ namespace ProcessExplorerClone
             InitializeStatusBar();
 
             LoadProcessList();
+        }
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            this.Width = fixedWidth;
+        }
+
+        private Icon LoadIconFromResource(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                return new Icon(stream);
+            }
         }
 
         private void InitializeMenu()
