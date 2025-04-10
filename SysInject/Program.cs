@@ -164,10 +164,10 @@ namespace ProcessExplorerClone
                 string selectedInjection = form.SelectedInjectionType;
                 string selectedDll = form.SelectedDllPath;
 
-                MessageBox.Show(
-                    $"Would inject DLL:\n{selectedDll}\nInto process: {procName} (PID {pid})\nUsing method: {selectedInjection}",
-                    "Injection Preview", MessageBoxButtons.OK, MessageBoxIcon.Information
-                );
+                //MessageBox.Show(
+                //    $"Would inject DLL:\n{selectedDll}\nInto process: {procName} (PID {pid})\nUsing method: {selectedInjection}",
+                //    "Injection Preview", MessageBoxButtons.OK, MessageBoxIcon.Information
+                //);
 
                 bool result = InjectDllRemote(pid, selectedDll);
 

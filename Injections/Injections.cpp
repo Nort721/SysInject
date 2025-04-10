@@ -41,8 +41,6 @@ BOOL InjectDllRemote(DWORD processId, LPSTR cDllFilePath) {
         return FALSE;
     }
 
-    MessageBoxA(NULL, "test1", "test1", MB_OK);
-
     LPVOID pLoadLibraryA = GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA");
     if (!pLoadLibraryA) {
         printf("[!] GetProcAddress Failed With Error: %d\n", GetLastError());
@@ -50,8 +48,6 @@ BOOL InjectDllRemote(DWORD processId, LPSTR cDllFilePath) {
         CloseHandle(hProcess);
         return FALSE;
     }
-
-    MessageBoxA(NULL, "test2", "test2", MB_OK);
 
     SIZE_T sNumberOfBytesWritten = 0;
     DWORD dwDllPathLength = (DWORD)(strlen(cDllFilePath) + 1);
@@ -64,8 +60,6 @@ BOOL InjectDllRemote(DWORD processId, LPSTR cDllFilePath) {
         return FALSE;
     }
 
-    MessageBoxA(NULL, "test3", "test3", MB_OK);
-
     if (!WriteProcessMemory(hProcess, pDllPathAddress, cDllFilePath, dwDllPathLength, &sNumberOfBytesWritten) || sNumberOfBytesWritten != dwDllPathLength) {
         printf("[!] WriteProcessMemory Failed With Error: %d\n", GetLastError());
         ShowLastErrorMessageVerbose();
@@ -73,8 +67,6 @@ BOOL InjectDllRemote(DWORD processId, LPSTR cDllFilePath) {
         CloseHandle(hProcess);
         return FALSE;
     }
-
-    MessageBoxA(NULL, "test4", "test4", MB_OK);
 
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pLoadLibraryA, pDllPathAddress, 0, NULL);
     if (!hThread) {
@@ -84,8 +76,6 @@ BOOL InjectDllRemote(DWORD processId, LPSTR cDllFilePath) {
         CloseHandle(hProcess);
         return FALSE;
     }
-
-    MessageBoxA(NULL, "test5", "test5", MB_OK);
 
     // Optionally wait until DLL is loaded
     WaitForSingleObject(hThread, INFINITE);
