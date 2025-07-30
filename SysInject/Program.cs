@@ -169,7 +169,25 @@ namespace ProcessExplorerClone
                 //    "Injection Preview", MessageBoxButtons.OK, MessageBoxIcon.Information
                 //);
 
-                bool result = InjectDllRemote(pid, selectedDll);
+                bool result = false;
+                switch (selectedInjection)
+                {
+                    case "LoadLibrary":
+                        result = InjectDllRemote(pid, selectedDll);
+                        break;
+                    case "Manual Map":
+                        MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    case "Thread Hijack":
+                        MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    case "Across bitness":
+                        MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    default:
+                        MessageBox.Show("The requested injection method is unsupported.", "Unsupported method", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                }
 
                 if (result)
                 {

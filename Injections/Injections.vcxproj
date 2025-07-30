@@ -151,12 +151,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="enumeration.h" />
+    <ClInclude Include="executil.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Injections.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Structs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="enumeration.cpp" />
+    <ClCompile Include="executil.cpp" />
     <ClCompile Include="Injections.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
