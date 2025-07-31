@@ -1,7 +1,7 @@
 #include "enumeration.h"
 #include "stdio.h"
 
-BOOL GetRemoteProcThreadViaNtQueryFunc(IN LPWSTR szProcessName, OUT PDWORD pdwProcessID, OUT PDWORD pdwThreadID, OUT OPTIONAL PHANDLE phThread) {
+BOOL GetRemoteProcThreadViaNtQuery(IN LPWSTR szProcessName, OUT PDWORD pdwProcessID, OUT PDWORD pdwThreadID, OUT OPTIONAL PHANDLE phThread) {
 
 	NTSTATUS						STATUS = 0x00;
 	fnNtQuerySystemInformation		pNtQuerySystemInformation = NULL;

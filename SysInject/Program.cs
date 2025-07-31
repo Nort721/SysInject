@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Drawing;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace ProcessExplorerClone
 {
@@ -140,6 +137,10 @@ namespace ProcessExplorerClone
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool InjectDllRemote(uint processId, string cDllFilePath);
 
+        [DllImport("Injections.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool InjectDllByThreadHijack(string cProcName, string cDllFilePath);
+
         private void OnInjectClicked(object sender, EventArgs e)
         {
             if (processListView.SelectedItems.Count == 0)
@@ -179,7 +180,8 @@ namespace ProcessExplorerClone
                         MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     case "Thread Hijack":
-                        MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        //MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        result = InjectDllByThreadHijack(procName, selectedDll);
                         break;
                     case "Across bitness":
                         MessageBox.Show("This injection method has not been implemented yet.", "Not yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
