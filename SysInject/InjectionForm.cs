@@ -48,6 +48,8 @@ public class InjectionForm : Form
         injectionTypeComboBox.SelectedIndex = 0;
         injectionTypeComboBox.Location = new Point(130, 12);
         injectionTypeComboBox.Size = new Size(270, 24);
+        // Add the event handler
+        injectionTypeComboBox.SelectedIndexChanged += InjectionTypeComboBox_SelectedIndexChanged;
 
         dllPathLabel = new Label();
         dllPathLabel.Text = "DLL to Inject:";
@@ -89,6 +91,14 @@ public class InjectionForm : Form
 
         AcceptButton = injectButton;
         CancelButton = cancelButton;
+    }
+
+    private void InjectionTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (injectionTypeComboBox.SelectedItem.ToString() == "Manual Map")
+        {
+            MessageBox.Show("Make sure your DLL is compatible.", "Compatibility Note", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 
     private void BrowseButton_Click(object sender, EventArgs e)
