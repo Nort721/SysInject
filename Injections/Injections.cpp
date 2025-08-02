@@ -1,40 +1,9 @@
 #include "Injections.h"
 #include "enumeration.h"
-#include <iostream>
 #include "executil.h"
-#include <string.h>
-#include <fstream>
-#include <filesystem>
+#include "utils.h"
 #include <cstdlib>
 #include <string>
-#include <sstream>
-
-void ShowLastErrorMessageVerbose() {
-	DWORD error = GetLastError();
-
-	LPVOID lpMsgBuf;
-	FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr,
-		error,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPSTR)&lpMsgBuf,
-		0, nullptr);
-
-	std::stringstream ss;
-	ss << "Execution Failed With Error: " << error << "\n" << (char*)lpMsgBuf;
-
-	MessageBoxA(nullptr, ss.str().c_str(), "Error", MB_OK | MB_ICONERROR);
-
-	LocalFree(lpMsgBuf);
-}
-
-std::wstring ConvertToWide(const std::string& ansiStr) {
-    int size_needed = MultiByteToWideChar(CP_ACP, 0, ansiStr.c_str(), -1, nullptr, 0);
-    std::wstring wideStr(size_needed, 0);
-    MultiByteToWideChar(CP_ACP, 0, ansiStr.c_str(), -1, &wideStr[0], size_needed);
-    return wideStr;
-}
 
 BOOL WriteDllPathToMemSpace(DWORD processId, LPCSTR cDllFilePath, OUT LPVOID* ppRemotePath) {
     if (!processId || !cDllFilePath || !ppRemotePath)
@@ -191,44 +160,3 @@ BOOL InjectDllByThreadHijack(LPSTR cProcName, LPSTR cDllFilePath) {
     CloseHandle(hThread);
     return TRUE;
 }
-
-//BOOL InjectToRemoteProcessNoExec(IN DWORD processId, LPSTR cDllFilePath, OUT PVOID* ppAddress) {
-//
-//    SIZE_T  sNumberOfBytesWritten = NULL;
-//    DWORD   dwOldProtection = NULL;
-//
-//    if (!processId || !cDllFilePath)
-//        return FALSE;
-//
-//    HANDLE hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION |
-//        PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ,
-//        FALSE, processId);
-//    if (!hProcess) {
-//        printf("[!] OpenProcess Failed With Error: %d\n", GetLastError());
-//        ShowLastErrorMessageVerbose();
-//        return FALSE;
-//    }
-//
-//    *ppAddress = VirtualAllocEx(hProcess, NULL, sSizeOfShellcode, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-//    if (*ppAddress == NULL) {
-//        printf("\n\t[!] VirtualAllocEx Failed With Error : %d \n", GetLastError());
-//        return FALSE;
-//    }
-//    printf("[i] Allocated Memory At : 0x%p \n", *ppAddress);
-//
-//
-//    if (!WriteProcessMemory(hProcess, *ppAddress, pShellcode, sSizeOfShellcode, &sNumberOfBytesWritten) || sNumberOfBytesWritten != sSizeOfShellcode) {
-//        printf("\n\t[!] WriteProcessMemory Failed With Error : %d \n", GetLastError());
-//        return FALSE;
-//    }
-//
-//
-//    if (!VirtualProtectEx(hProcess, *ppAddress, sSizeOfShellcode, PAGE_EXECUTE_READWRITE, &dwOldProtection)) {
-//        printf("\n\t[!] VirtualProtectEx Failed With Error : %d \n", GetLastError());
-//        return FALSE;
-//    }
-//
-//
-//    return TRUE;
-//}
-

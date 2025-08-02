@@ -13,6 +13,7 @@ namespace ProcessExplorerClone
         private ContextMenuStrip contextMenu;
         private ToolStripMenuItem injectMenuItem;
         private ToolStripMenuItem refreshMenuItem;
+        private ToolStripMenuItem terminateMenuItem;
         private StatusStrip statusBar;
         private ToolStripStatusLabel statusLabel;
         private int fixedWidth = 600;
@@ -67,8 +68,11 @@ namespace ProcessExplorerClone
 
             injectMenuItem = new ToolStripMenuItem("Inject", null, OnInjectClicked);
             refreshMenuItem = new ToolStripMenuItem("Refresh", null, (s, e) => LoadProcessList());
+            terminateMenuItem = new ToolStripMenuItem("Kill", null, onTerminateClicked);
 
             contextMenu.Items.Add(injectMenuItem);
+            contextMenu.Items.Add(new ToolStripSeparator());
+            contextMenu.Items.Add(terminateMenuItem);
             contextMenu.Items.Add(new ToolStripSeparator());
             contextMenu.Items.Add(refreshMenuItem);
         }
@@ -140,6 +144,40 @@ namespace ProcessExplorerClone
         [DllImport("Injections.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool InjectDllByThreadHijack(string cProcName, string cDllFilePath);
+
+        [DllImport("Injections.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool TerminateTargetProcess(uint processId);
+
+        private void onTerminateClicked(object sender, EventArgs e)
+        {
+            if (processListView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a process first.", "No Process Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var item = processListView.SelectedItems[0];
+            string procName = item.SubItems[0].Text;
+            string pidStr = item.SubItems[1].Text;
+
+            if (!uint.TryParse(pidStr, out uint pid))
+            {
+                MessageBox.Show("Invalid PID selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            bool result = TerminateTargetProcess(pid);
+
+            if (result)
+            {
+                MessageBox.Show("Process "+procName+" terminated successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Failed to terminate "+procName+" process", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void OnInjectClicked(object sender, EventArgs e)
         {
