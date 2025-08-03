@@ -172,6 +172,7 @@ namespace ProcessExplorerClone
             if (result)
             {
                 MessageBox.Show("Process "+procName+" terminated successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadProcessList();
             }
             else
             {
