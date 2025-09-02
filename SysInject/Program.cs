@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using SysInject;
 
 namespace ProcessExplorerClone
 {
@@ -12,8 +13,9 @@ namespace ProcessExplorerClone
         private ListView processListView;
         private ContextMenuStrip contextMenu;
         private ToolStripMenuItem injectMenuItem;
-        private ToolStripMenuItem refreshMenuItem;
         private ToolStripMenuItem terminateMenuItem;
+        private ToolStripMenuItem refreshMenuItem;
+        private ToolStripMenuItem infoMenuItem;
         private StatusStrip statusBar;
         private ToolStripStatusLabel statusLabel;
         private int fixedWidth = 600;
@@ -67,14 +69,17 @@ namespace ProcessExplorerClone
             contextMenu = new ContextMenuStrip();
 
             injectMenuItem = new ToolStripMenuItem("Inject", null, OnInjectClicked);
-            refreshMenuItem = new ToolStripMenuItem("Refresh", null, (s, e) => LoadProcessList());
             terminateMenuItem = new ToolStripMenuItem("Kill", null, onTerminateClicked);
+            refreshMenuItem = new ToolStripMenuItem("Refresh", null, (s, e) => LoadProcessList());
+            infoMenuItem = new ToolStripMenuItem("Info", null, OnInfoClicked);
 
             contextMenu.Items.Add(injectMenuItem);
             contextMenu.Items.Add(new ToolStripSeparator());
             contextMenu.Items.Add(terminateMenuItem);
             contextMenu.Items.Add(new ToolStripSeparator());
             contextMenu.Items.Add(refreshMenuItem);
+            contextMenu.Items.Add(new ToolStripSeparator());
+            contextMenu.Items.Add(infoMenuItem);
         }
 
         private void InitializeListView()
@@ -241,6 +246,28 @@ namespace ProcessExplorerClone
             }
 
             form.Dispose();
+        }
+
+        private void OnInfoClicked(object sender, EventArgs e)
+        {
+            if (processListView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a process first.", "No Process Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var item = processListView.SelectedItems[0];
+            string procName = item.SubItems[0].Text;
+            string pidStr = item.SubItems[1].Text;
+
+            if (!uint.TryParse(pidStr, out uint pid))
+            {
+                MessageBox.Show("Invalid PID selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            InfoForm infoForm = new InfoForm(pid);
+            infoForm.Show();
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
