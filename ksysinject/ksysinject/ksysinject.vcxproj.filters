@@ -19,11 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="ksysinject.inf">
-      <Filter>Driver Files</Filter>
-    </Inf>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="entry.c">
       <Filter>Source Files</Filter>
     </ClCompile>
